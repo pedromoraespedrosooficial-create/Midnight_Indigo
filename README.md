@@ -37,7 +37,7 @@ Este projeto simula um marketplace real, permitindo que diferentes vendedores ge
 
 ---
 
-## ⚙️ Como Rodar o Projeto
+## Como Rodar o Projeto
 
 ### 1. Pré-requisitos
 
