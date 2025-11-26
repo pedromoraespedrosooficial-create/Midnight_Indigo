@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Midnight Indigo - Seu E-commerce de Luxo{% endblock %}
+
+{% block content %}
+
+<div class="hero-section fade-in" style="background-image: linear-gradient(rgba(9, 21, 37, 0.7), rgba(9, 21, 37, 0.9)), url('{{ url_for('static', filename='img/banner_midnight_indigo.jpg') }}');">
+    <div class="hero-content">
+        <h1>O ÁPICE DO LUXO</h1>
+        <p>Alta relojoaria, joalheria e os artigos mais cobiçados do mundo.</p>
+        <a href="{{ url_for('catalogo') }}" class="btn">Ver Catálogo</a>
+    </div>
+</div>
+
+<div class="container" style="margin-top: 2rem;">
+
+    <h2 class="fade-in">Novidades (Produtos Recentes)</h2>
+    <div class="card-carousel fade-in">
+        <div class="carousel-track">
+            {% for produto in produtos_recentes %}
+                <div class="card">
+                    <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                        <img src="{{ produto.url_imagem or 'https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                    </a>
+                    <div class="card-content">
+                        <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                            <h3>{{ produto.nome }}</h3>
+                        </a>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                            {{ produto.preco | currency }}
+                        </p>
+                        <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Nenhum produto cadastrado ainda.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--fundo-medio);">
+
+    <h2 class="fade-in">Mais Vendidos</h2>
+    <div class="card-carousel fade-in">
+        <div class="carousel-track">
+            {% for produto in mais_vendidos %}
+                <div class="card">
+                    <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                        <img src="{{ produto.url_imagem or 'https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                    </a>
+                    <div class="card-content">
+                        <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                            <h3>{{ produto.nome }}</h3>
+                        </a>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                            {{ produto.preco | currency }}
+                        </p>
+                        <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Nenhum produto vendido ainda.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--fundo-medio);">
+    
+    <h2 class="fade-in">Relógios de Luxo</h2>
+    <div class="card-carousel fade-in">
+        <div class="carousel-track">
+            {% for produto in relogios_luxo %}
+                <div class="card">
+                    <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                        <img src="{{ produto.url_imagem or 'https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                    </a>
+                    <div class="card-content">
+                        <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                            <h3>{{ produto.nome }}</h3>
+                        </a>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                            {{ produto.preco | currency }}
+                        </p>
+                        <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Nenhum relógio cadastrado nesta categoria.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--fundo-medio);">
+
+    <h2 class="fade-in">Em Destaque</h2>
+    <div class="card-carousel fade-in">
+        <div class="carousel-track">
+            {% for produto in produtos_destaque %}
+                <div class="card">
+                    <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                        <img src="{{ produto.url_imagem or 'https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                    </a>
+                    <div class="card-content">
+                        <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                            <h3>{{ produto.nome }}</h3>
+                        </a>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                            {{ produto.preco | currency }}
+                        </p>
+                        <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Nenhum produto em destaque.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

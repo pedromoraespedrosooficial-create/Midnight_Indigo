@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Busca por: {{ query }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fade-in">Resultados da Busca por: "{{ query }}"</h1>
+
+    {% if not produtos %}
+        <div class="form-container fade-in" style="display: flex; justify-content: center; align-items: center; min-height: 40vh;">
+            <div class="hero-content">
+                <h2>Nenhum produto encontrado.</h2>
+                <p>Tente uma busca com termos diferentes.</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="grid-container fade-in">
+            {% for produto in produtos %}
+                <div class="card">
+                    <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                        <img src="{{ produto.url_imagem or 'https:https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                    </a>
+                    <div class="card-content">
+                        <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                            <h3>{{ produto.nome }}</h3>
+                        </a>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                            {{ produto.preco | currency }}
+                        </p>
+                        <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container form-container-small fade-in">
+        <h2>Login</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="senha" name="senha" required>
+                </div>
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+            <p>Ainda não tem conta? <a href="{{ url_for('register') }}">Registre-se</a></p>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Midnight Indigo{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Raleway:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.8">
+</head>
+<body>
+    <header class="main-header">
+        <nav>
+            <a href="{{ url_for('home') }}" class="logo">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Midnight Indigo Logo" style="height: 50px; width: auto;">
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('catalogo') }}">Catálogo</a></li>
+                <li><a href="{{ url_for('cupons') }}">Cupons</a></li>
+                <li><a href="{{ url_for('sobre') }}">Sobre</a></li>
+            </ul>
+
+            <form action="{{ url_for('search') }}" method="GET" class="header-search">
+                <input type="text" name="query" placeholder="Pesquisar produtos..." required>
+                <button type="submit" class="btn-search">Buscar</button>
+            </form>
+
+            <ul class="nav-auth">
+                {% if current_user.is_authenticated %}
+                    
+                    <li><a href="{{ url_for('carrinho') }}" class="btn-secondary" style="margin-right: 1rem;">
+                        🛒 Carrinho
+                    </a></li>
+
+                    <div class="dropdown" id="user-dropdown">
+                        <button type="button" class="dropdown-toggle">
+                            Olá, {{ current_user.nome }} &#9662;
+                        </button>
+                        
+                        <div class="dropdown-menu">
+                            <a href="{{ url_for('meu_perfil') }}" class="dropdown-item">Meu Perfil</a>
+                            <a href="{{ url_for('pedidos') }}" class="dropdown-item">Meus Pedidos</a>
+                            
+                            {% if current_user.tipo_usuario == 'vendedor' %}
+                                <a href="{{ url_for('venda') }}" class="dropdown-item">Meus Produtos (Venda)</a>
+                            {% endif %}
+                            
+                            {% if current_user.tipo_usuario == 'admin' %}
+                                <a href="{{ url_for('admin_panel') }}" class="dropdown-item admin-link">Painel Admin</a>
+                            {% endif %}
+                            
+                            <a href="{{ url_for('logout') }}" class="dropdown-item logout">Logout</a>
+                        </div>
+                    </div>
+                
+                {% else %}
+                    <li><a href="{{ url_for('carrinho') }}" class="btn-secondary" style="margin-right: 1rem;">
+                        🛒 Carrinho
+                    </a></li>
+                    <li><a href="{{ url_for('login') }}" class="btn">Login</a></li>
+                    <li><a href="{{ url_for('register') }}" class="btn-secondary">Registrar</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <a href="#" id="scrollTopBtn" title="Voltar ao Topo">&#9650;</a>
+
+    <footer class="main-footer-container">
+        <div class="footer-content">
+            <p>&copy; 2025 Midnight Indigo. Todos os direitos reservados.</p>
+            <p>Um projeto de E-commerce feito com Flask.</p>
+        </div>
+        
+        <script src="{{ url_for('static', filename='js/main.js') }}?v=1.0"></script>
+    </footer>
+
+</body>
+</html>

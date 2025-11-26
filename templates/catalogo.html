@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Catálogo de Produtos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fade-in">Catálogo de Produtos</h1>
+    <div class="filter-bar fade-in" style="margin-bottom: 2rem;">
+        <span class="filter-title">Filtrar por Categoria:</span>
+        <div class="filter-options">
+            <a href="{{ url_for('catalogo') }}" 
+               class="btn-filter {% if not categoria_selecionada %}active{% endif %}">
+               Todos
+            </a>
+            {% for cat in categorias %}
+                <a href="{{ url_for('catalogo', categoria=cat) }}" 
+                   class="btn-filter {% if categoria_selecionada == cat %}active{% endif %}">
+                   {{ cat }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="grid-container fade-in">
+        {% for produto in produtos %}
+            <div class="card">
+                <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                    <img src="{{ produto.url_imagem or 'https:https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                </a>
+                <div class="card-content">
+                    <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                        <h3>{{ produto.nome }}</h3>
+                    </a>
+                    <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                        {{ produto.preco | currency }}
+                    </p>
+                    <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="form-container fade-in" style="display: flex; justify-content: center; align-items: center; min-height: 40vh; grid-column: 1 / -1;">
+                <div class="hero-content">
+                    <h2>Nenhum produto encontrado</h2>
+                    {% if categoria_selecionada %}
+                        <p>Não há produtos na categoria "{{ categoria_selecionada }}".</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Painel de Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fade-in">Painel de Administração</h1>
+
+    <section class="admin-section fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Gerenciar Usuários ({{ users|length }})</h2>
+            <a href="{{ url_for('add_user') }}" class="btn">Adicionar Usuário</a>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id_usuario }}</td>
+                        <td>{{ user.nome }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.tipo_usuario }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('edit_user', id=user.id) }}" class="btn-secondary">Editar</a>
+                                {% if user.id != current_user.id %}
+                                <form action="{{ url_for('delete_user', id=user.id) }}" method="POST" onsubmit="return confirm('Tem certeza que quer excluir este usuário? Esta ação é permanente.');">
+                                    <button type="submit" class="btn-danger">Excluir</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-section fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Gerenciar Produtos ({{ produtos|length }})</h2>
+            <a href="{{ url_for('venda') }}" class="btn">Gerenciar Produtos</a>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Produto</th>
+                        <th>Vendedor</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in produtos[0:5] %}
+                    <tr>
+                        <td>{{ produto.id_produto }}</td>
+                        <td>{{ produto.nome }}</td>
+                        <td>{{ produto.vendedor.nome }}</td>
+                        <td>{{ produto.preco | currency }}</td>
+                        <td>{{ produto.estoque }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if produtos|length > 5 %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">...e mais {{ produtos|length - 5 }} produto(s).</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-section fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Gerenciar Cupons ({{ cupons|length }})</h2>
+            <a href="{{ url_for('add_cupom') }}" class="btn">Adicionar Cupom</a>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Código</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cupom in cupons %}
+                    <tr>
+                        <td>{{ cupom.id_cupom }}</td>
+                        <td>{{ cupom.codigo }}</td>
+                        <td>{{ cupom.tipo | capitalize }}</td>
+                        <td>
+                            {% if cupom.tipo == 'porcentagem' %}
+                                {{ cupom.valor|float }}%
+                            {% else %}
+                                {{ cupom.valor | currency }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if cupom.ativo %}
+                                <span style="color: var(--verde-claro);">Ativo</span>
+                            {% else %}
+                                <span style="color: var(--vermelho-claro);">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('edit_cupom', id=cupom.id_cupom) }}" class="btn-secondary">Editar</a>
+                                <form action="{{ url_for('delete_cupom', id=cupom.id_cupom) }}" method="POST" onsubmit="return confirm('Tem certeza que quer excluir este cupom?');">
+                                    <button type="submit" class="btn-danger">Excluir</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <section class="admin-section fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Gerenciar Pedidos ({{ pedidos|length }})</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Valor Total</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pedido in pedidos[0:5] %}
+                    <tr {% if pedido.status == 'Devolução Solicitada' %}class="pending-request-row"{% endif %}>
+                        <td>{{ pedido.id_pedido }}</td>
+                        <td>{{ pedido.comprador.nome }}</td>
+                        <td>{{ pedido.data_pedido.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ pedido.valor_total | currency }}</td>
+                        <td>
+                            {% if pedido.status == 'Devolução Solicitada' %}
+                                <strong style="color: var(--vermelho-claro);">{{ pedido.status }}</strong>
+                            {% else %}
+                                {{ pedido.status | capitalize }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="#" class="btn-secondary">Ver Pedido</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if pedidos|length > 5 %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;">...e mais {{ pedidos|length - 5 }} pedido(s).</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

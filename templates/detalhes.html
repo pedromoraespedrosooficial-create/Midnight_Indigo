@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ produto.nome }} - Midnight Indigo{% endblock %}
+{% block content %}
+<div class="container fade-in">
+    <div class="detail-grid">
+        <div class="detail-poster">
+            <img src="{{ produto.url_imagem or 'https:https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+        </div>
+        <div class="detail-info">
+            <h1>{{ produto.nome }}</h1>
+            <div class="detail-meta">
+                <span class="meta-score" style="font-size: 2.5rem;">
+                    {{ produto.preco | currency }}
+                </span>
+                <span class="meta-category">{{ produto.categoria.split('/')[0].strip() }}</span>
+            </div>
+            <p style="font-size: 1.1rem; color: var(--creme);">
+                Vendido por: <strong>{{ produto.vendedor.nome }}</strong>
+            </p>
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--fundo-medio);">
+            <form action="{{ url_for('add_carrinho') }}" method="POST">
+                <input type="hidden" name="produto_id" value="{{ produto.id_produto }}">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="quantidade" style="font-weight: 700; font-size: 1rem;">Quantidade:</label>
+                    {% if produto.estoque > 0 %}
+                        <div class="add-to-cart-form">
+                            <div class="input-wrapper quantity-input-wrapper">
+                                <input type="number" name="quantidade" id="quantidade" value="1" min="1" max="{{ produto.estoque }}" required>
+                            </div>
+                            <button type="submit" class="btn">Adicionar ao Carrinho</button>
+                        </div>
+                        <small style="color: var(--fundo-claro); margin-top: 0.5rem; display: block;">
+                            ({{ produto.estoque }} unidades disponíveis)
+                        </small>
+                    {% else %}
+                        <p style="margin-top: 0.5rem; color: var(--vermelho-claro); font-weight: 700;">Produto Esgotado</p>
+                    {% endif %}
+                </div>
+            </form>
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--fundo-medio);">
+            <h2>Descrição do Produto</h2>
+            <p class="product-description">{{ produto.descricao }}</p>
+
+            <h3 style="margin-top: 2rem;">Especificações</h3>
+            <p class="product-description">
+                {% for spec in produto.categoria.split('/') %}
+                    {{ spec.strip() }}
+                    {% if not loop.last %}<br>{% endif %}
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

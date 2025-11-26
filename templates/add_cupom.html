@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Cupom{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container form-container-small fade-in">
+        <h2>Adicionar Novo Cupom</h2>
+        <form method="POST" action="{{ url_for('add_cupom') }}">
+            <div class="form-group">
+                <label for="codigo">Código (Ex: LUXO10)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="codigo" name="codigo" required>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tipo">Tipo de Desconto</label>
+                    <select name="tipo" id="tipo" class="form-group select">
+                        <option value="porcentagem">Porcentagem (%)</option>
+                        <option value="fixo">Valor Fixo (R$)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="valor">Valor (Ex: 10 ou 50.00)</label>
+                    <div class="input-wrapper">
+                        <input type="number" step="0.01" min="0" id="valor" name="valor" required>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">Adicionar Cupom</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

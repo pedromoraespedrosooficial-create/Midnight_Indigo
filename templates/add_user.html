@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Usuário{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container form-container-small fade-in">
+        <h2>Adicionar Novo Usuário</h2>
+        <form method="POST" action="{{ url_for('add_user') }}">
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <div class="input-wrapper">
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="senha" name="senha" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tipo_usuario">Tipo de Usuário</label>
+                <select name="tipo_usuario" id="tipo_usuario" class="form-group select">
+                    <option value="cliente">Cliente</option>
+                    <option value="vendedor">Vendedor</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Criar Usuário</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

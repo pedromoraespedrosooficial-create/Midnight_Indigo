@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Meus Pedidos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fade-in">Meus Pedidos</h1>
+
+    {% if not pedidos %}
+        <div class="form-container fade-in" style="display: flex; justify-content: center; align-items: center; min-height: 40vh;">
+            <div class="hero-content">
+                <h2>Você ainda não fez nenhum pedido.</h2>
+                <a href="{{ url_for('catalogo') }}" class="btn">Ver Produtos</a>
+            </div>
+        </div>
+    {% else %}
+        {% for pedido in pedidos %}
+        <section class="admin-section fade-in" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--fundo-claro);">
+                <div>
+                    <h2 style="margin-bottom: 0.5rem; color: var(--amarelo);">Pedido #{{ pedido.id_pedido }}</h2>
+                    <p style="color: var(--fundo-claro);">Realizado em: {{ pedido.data_pedido.strftime('%d/%m/%Y às %H:%M') }}</p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 0.5rem; text-align: right;">Total: {{ pedido.valor_total | currency }}</h3>
+                    {% if pedido.status == 'Devolução Solicitada' %}
+                        <p style="text-align: right;">Status: <span style="font-weight: 700; color: var(--vermelho-claro);">{{ pedido.status }}</span></p>
+                    {% elif pedido.status == 'Enviado' or pedido.status == 'Concluido' %}
+                         <p style="text-align: right;">Status: <span style="font-weight: 700; color: var(--verde-claro);">{{ pedido.status }}</span></p>
+                    {% else %}
+                        <p style="text-align: right;">Status: <span style="font-weight: 700;">{{ pedido.status | capitalize }}</span></p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="table-responsive" style="margin-top: 1.5rem;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Produto</th>
+                            <th>Preço Unit. (na compra)</th>
+                            <th>Quantidade</th>
+                            <th>Total Item</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pedido.itens %}
+                        <tr>
+                            <td style="width: 80px;">
+                                <img src="{{ item.produto.url_imagem or 'https://via.placeholder.com/80x80.png?text=Sem+Img' }}" 
+                                     alt="{{ item.produto.nome }}" 
+                                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                            </td>
+                            <td>
+                                <a href="{{ url_for('detalhes', id=item.produto.id_produto) }}" style="font-weight: 700; color: var(--creme);">
+                                    {{ item.produto.nome }}
+                                </a>
+                            </td>
+                            <td>{{ item.preco_unitario | currency }}</td>
+                            <td>{{ item.quantidade }}x</td>
+                            <td style="font-weight: 700;">
+                                {{ (item.preco_unitario * item.quantidade) | currency }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="text-align: right; margin-top: 1rem;">
+                {% if pedido.status == 'Enviado' or pedido.status == 'Concluido' %}
+                    <form action="{{ url_for('solicitar_devolucao', id_pedido=pedido.id_pedido) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja solicitar a devolução deste pedido?');">
+                        <button type="submit" class="btn-secondary" style="border-color: var(--vermelho-claro); color: var(--vermelho-claro);">
+                            Solicitar Devolução
+                        </button>
+                    </form>
+                {% elif pedido.status == 'Devolução Solicitada' %}
+                    <p style="color: var(--vermelho-claro); font-weight: 700;">Sua solicitação de devolução está sendo processada.</p>
+                {% else %}
+                    <p style="color: var(--fundo-claro);">A devolução não está disponível para este pedido.</p>
+                {% endif %}
+            </div>
+
+        </section>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

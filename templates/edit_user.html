@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Editar Usuário{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container form-container-small fade-in">
+        <h2>Editando: {{ user.nome }}</h2>
+        <form method="POST" action="{{ url_for('edit_user', id=user.id) }}">
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <div class="input-wrapper">
+                    <input type="text" id="nome" name="nome" required value="{{ user.nome }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" required value="{{ user.email }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tipo_usuario">Tipo de Usuário</label>
+                <select name="tipo_usuario" id="tipo_usuario" class="form-group select">
+                    <option value="cliente" {% if user.tipo_usuario == 'cliente' %}selected{% endif %}>Cliente</option>
+                    <option value="vendedor" {% if user.tipo_usuario == 'vendedor' %}selected{% endif %}>Vendedor</option>
+                    <option value="admin" {% if user.tipo_usuario == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="senha">Nova Senha (Deixe em branco para não alterar)</label>
+                <div class="input-wrapper">
+                    <input type="password" id="senha" name="senha">
+                </div>
+            </div>
+            <button type="submit" class="btn">Salvar Alterações</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

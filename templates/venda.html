@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Meus Produtos (Venda){% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fade-in">Gerenciar Meus Produtos</h1>
+
+    <section class="admin-section fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>
+                {% if current_user.tipo_usuario == 'admin' %}
+                    Todos os Produtos ({{ produtos|length }})
+                {% else %}
+                    Meus Produtos Cadastrados ({{ produtos|length }})
+                {% endif %}
+            </h2>
+            <a href="{{ url_for('add_produto') }}" class="btn">Adicionar Produto</a>
+        </div>
+        
+        {% if not produtos %}
+            <div class="hero-content">
+                {% if current_user.tipo_usuario == 'admin' %}
+                    <h2>Nenhum produto cadastrado no site.</h2>
+                {% else %}
+                    <h2>Você ainda não cadastrou nenhum produto.</h2>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Produto</th>
+                            {% if current_user.tipo_usuario == 'admin' %}
+                                <th>Vendedor</th>
+                            {% endif %}
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Categoria</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in produtos %}
+                        <tr>
+                            <td>{{ produto.id_produto }}</td>
+                            <td>{{ produto.nome }}</td>
+                            {% if current_user.tipo_usuario == 'admin' %}
+                                <td>{{ produto.vendedor.nome }}</td>
+                            {% endif %}
+                            <td>{{ produto.preco | currency }}</td>
+                            <td>{{ produto.estoque }}</td>
+                            <td>{{ produto.categoria.split('/')[0].strip() }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('edit_produto', id=produto.id_produto) }}" class="btn-secondary">Editar</a>
+                                    <form action="{{ url_for('delete_produto', id=produto.id_produto) }}" method="POST" onsubmit="return confirm('Tem certeza que quer excluir este produto?');">
+                                        <button type="submit" class="btn-danger">Excluir</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

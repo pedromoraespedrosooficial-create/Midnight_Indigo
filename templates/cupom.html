@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Cupons de Desconto{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container fade-in" style="max-width: 900px;">
+        <h2>Cupons de Desconto Ativos</h2>
+        <p style="text-align: center; margin-bottom: 2rem; color: var(--fundo-claro);">
+            Use estes códigos no seu carrinho para ganhar um desconto!
+        </p>
+
+        {% if not cupons %}
+             <div class="hero-content">
+                <h2>Nenhum cupom ativo no momento.</h2>
+                <p>Volte mais tarde!</p>
+            </div>
+        {% else %}
+            <div class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+                
+                {% for cupom in cupons %}
+                <div class="card" style="text-align: center; background-color: var(--fundo-medio);">
+                    <div class="card-content">
+                        <h3 style="color: var(--amarelo); font-size: 2rem;">
+                            {% if cupom.tipo == 'porcentagem' %}
+                                {{ cupom.valor|float }}% OFF
+                            {% else %}
+                                {{ cupom.valor | currency }}
+                            {% endif %}
+                        </h3>
+                        <p style="color: var(--creme);">Use o código:</p>
+                        <div class="temp-password-box" style="background-color: var(--fundo-escuro); color: var(--amarelo); margin: 0.5rem 0;">
+                            {{ cupom.codigo }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Meu Carrinho{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fade-in">Meu Carrinho</h1>
+
+    {% if not itens_carrinho %}
+        <div class="form-container fade-in" style="display: flex; justify-content: center; align-items: center; min-height: 40vh;">
+            <div class="hero-content"> <h2>Seu carrinho está vazio.</h2>
+                <p>Que tal dar uma olhada no nosso catálogo?</p>
+                <a href="{{ url_for('catalogo') }}" class="btn">Ver Produtos</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="detail-grid" style="grid-template-columns: 2fr 1fr; align-items: flex-start;">
+            <section class="admin-section fade-in">
+                <h2>Itens no Carrinho</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Produto</th>
+                                <th>Preço Unit.</th>
+                                <th>Quantidade</th>
+                                <th>Total</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in itens_carrinho %}
+                            <tr>
+                                <td style="width: 80px;">
+                                    <img src="{{ item.produto.url_imagem or 'https://via.placeholder.com/80x80.png?text=Sem+Img' }}" 
+                                         alt="{{ item.produto.nome }}" 
+                                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('detalhes', id=item.produto.id_produto) }}" style="font-weight: 700; color: var(--creme);">
+                                        {{ item.produto.nome }}
+                                    </a>
+                                    <small style="display: block; color: var(--fundo-claro);">
+                                        Vendido por: {{ item.produto.vendedor.nome }}
+                                    </small>
+                                </td>
+                                <td>{{ item.produto.preco | currency }}</td>
+                                <td class="cart-quantity-controls">
+                                    <form action="{{ url_for('update_carrinho', id_item=item.id_item_carrinho) }}" method="POST" class="cart-quantity-form">
+                                        <div class="input-wrapper">
+                                            <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1" max="{{ item.produto.estoque }}">
+                                        </div>
+                                        <button type="submit" class="btn">OK</button>
+                                    </form>
+                                </td>
+                                <td style="font-weight: 700;">
+                                    {{ (item.produto.preco * item.quantidade) | currency }}
+                                </td>
+                                <td>
+                                    <form action="{{ url_for('remove_carrinho', id_item=item.id_item_carrinho) }}" method="POST">
+                                        <button type="submit" class="btn-danger" style="padding: 0.5rem 0.8rem;">X</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <aside class="admin-section fade-in" style="position: sticky; top: 90px;">
+                <h2>Resumo do Pedido</h2>
+                <div style="font-size: 1.1rem; line-height: 2;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Subtotal:</span>
+                        <span>{{ subtotal | currency }}</span>
+                    </div>
+                    
+                    {% if desconto > 0 %}
+                    <div style="display: flex; justify-content: space-between; color: var(--verde-claro);">
+                        <span>Desconto ({{ cupom_aplicado.codigo }}):</span>
+                        <span>- {{ desconto | currency }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid var(--fundo-claro);">
+                    
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.3rem; color: var(--amarelo);">
+                        <span>TOTAL:</span>
+                        <span>{{ total | currency }}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: var(--creme); margin-bottom: 0.5rem; font-family: 'Raleway', sans-serif; font-weight: 700;">Aplicar Cupom</h4>
+                    <form action="{{ url_for('carrinho') }}" method="POST" style="display: flex;">
+                        <div class="input-wrapper" style="flex-grow: 1; border-radius: 4px 0 0 4px;">
+                            <input type="text" name="codigo_cupom" placeholder="Ex: PROMO10" value="{{ cupom_aplicado.codigo if cupom_aplicado else '' }}">
+                        </div>
+                        <button type="submit" class="btn" style="border-radius: 0 4px 4px 0;">Aplicar</button>
+                    </form>
+                    {% if cupom_aplicado %}
+                    <form action="{{ url_for('carrinho') }}" method="POST" style="margin-top: 0.5rem;">
+                        <input type="hidden" name="codigo_cupom" value="">
+                        <button type="submit" class="btn-secondary" style="width: 100%; border-color: var(--vermelho-claro); color: var(--vermelho-claro);">Remover Cupom</button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <form action="{{ url_for('finalizar_pedido') }}" method="POST">
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 2rem; font-size: 1.2rem; padding: 1rem;">
+                        Finalizar Pedido
+                    </button>
+                </form>
+            </aside>
+        </div> 
+
+        {% if produtos_recomendados %}
+            <hr style="margin: 3rem 0; border: none; border-top: 2px solid var(--fundo-medio);">
+            <section class="fade-in">
+                <h2>Você também pode gostar...</h2>
+                <div class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+                    {% for produto in produtos_recomendados %}
+                        <div class="card">
+                            <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                                <img src="{{ produto.url_imagem or 'https:https://via.placeholder.com/400x400.png/091525/cfaf62?text=Midnight+Indigo' }}" alt="{{ produto.nome }}">
+                            </a>
+                            <div class="card-content">
+                                <a href="{{ url_for('detalhes', id=produto.id_produto) }}">
+                                    <h3>{{ produto.nome }}</h3>
+                                </a>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: var(--amarelo);">
+                                    {{ produto.preco | currency }}
+                                </p>
+                                <p>Vendido por: {{ produto.vendedor.nome }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
