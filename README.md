@@ -23,7 +23,7 @@ Este projeto simula um marketplace real, permitindo que diferentes vendedores ge
 
 ---
 
-## 🔧 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **Backend:** Python 3.10+
 * **Framework:** Flask
